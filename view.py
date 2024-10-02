@@ -43,7 +43,7 @@ def register():
     form = RegisterForm()
 
     if form.validate():
-        hashed_password = generate_password_hash(form.password.data, method='sha256')
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
 
         try:
             new_user = database.SYS_USERS(username=form.username.data, password=hashed_password)
@@ -77,7 +77,7 @@ def change_login_password():
         if form.validate():
             user = database.SYS_USERS.query.filter_by(username=form.username.data).first()
             if check_password_hash(user.password, form.password.data):
-                hashed_password_change = generate_password_hash(form.new_password.data, method='sha256')
+                hashed_password_change = generate_password_hash(form.new_password.data, method='pbkdf2:sha256')
                 update_this = database.SYS_USERS.query.filter_by(username=form.username.data).first()
                 update_this.password = hashed_password_change
                 db.session.commit()
